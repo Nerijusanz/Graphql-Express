@@ -3,6 +3,7 @@ const path = require("path");
 const express = require("express");
 const graphqlHttp = require("express-graphql");
 const bodyParser = require("body-parser");
+const cors = require("cors");
 
 /*
 import mongoose from 'mongoose';
@@ -19,48 +20,17 @@ mongoose.set('useCreateIndex', true);
 
 const graphqlSchema = require("./graphql/schema");
 
-//const graphqlResolver = require('./graphql/resolvers');
-
-//const auth = require('./middleware/auth');
 const app = express();
 
 //app.use(bodyParser.urlencoded()); //x-www-form-urlencoded <form>
 app.use(bodyParser.json()); //application/json
-
-
-// install npm package cors();
-app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "OPTIONS,GET,POST,PUT,PATCH,DELETE"
-  );
-  res.setHeader(
-    "Access-Control-Allow-Headers",
-    "Content-Type",
-    "Authorization"
-  );
-  if (req.method === "OPTIONS") return res.sendStatus(200);
-
-  next();
-});
-
-// app.use(auth); //authorization midleware
+app.use(cors());
 
 app.use(
   "/graphql",
   graphqlHttp({
     schema: graphqlSchema,
-    //rootValue:graphqlResolver,
-    graphiql: true,
-    formatError(err) {
-      if (!err.originalError) return err;
-
-      const data = err.originalError.data;
-      const message = err.message || "An error occured";
-      const code = err.originalError.code || 500;
-      return { message: message, status: code, data: data };
-    }
+    graphiql: true
   })
 );
 
